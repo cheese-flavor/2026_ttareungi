@@ -5,3 +5,11 @@ __pycache__/
 venv/
 .env
 .DS_Store
+
+# Private specification and local credentials (data is tracked on GitLab)
+*.pdf
+/private/
+.env.*
+!.env.example
+*credentials*.json
+*service-account*.json
