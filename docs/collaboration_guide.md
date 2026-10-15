@@ -18,10 +18,8 @@
 
 | 브랜치명 예시 | 담당 |
 |---|---|
-| `feature/F401-topic-definition` | 본인 |
-| `feature/F402-data-collection` | 본인 |
-| `feature/F403-preprocessing` | 본인 |
-| `feature/F404-eda-viz` | 신현준 |
+| `feature/F401-F403-setup` (실사용: F401~F403 통합) | 본인 |
+| `feature/F404-eda-viz` | 본인 |
 | `feature/F405-insight` | 신현준 |
 | `feature/F406-extension` (선택) | 신현준 |
 
@@ -36,15 +34,16 @@
 ### 병합(Merge Request) 규칙
 1. 기능 브랜치에서 작업 → push
 2. GitLab에서 `master`로 Merge Request(MR) 생성
-3. (2인 팀이라도) 서로 변경사항 간단히 확인 후 머지 — 특히 F403→F404 경계에서 데이터 스키마가 바뀌면 꼭 리뷰
+3. (2인 팀이라도) 서로 변경사항 간단히 확인 후 머지 — 특히 F404→F405 경계에서 결과물(그래프 해석 등)이 늘어나면 꼭 리뷰
 4. 충돌(conflict) 발생 시 데이터 파일(`data/processed/*.csv`)은 임의 수정 금지, 작성자에게 먼저 확인
 
-### 핸드오프 시점 (F403 → F404)
-- 본인이 `feature/F403-preprocessing`을 `master`에 머지 완료 후, 2차 담당자에게 아래를 안내:
+### 핸드오프 시점 (F404 → F405)
+- 본인이 F404까지 작업한 브랜치를 `master`에 머지 완료 후, 2차 담당자(신현준)에게 아래를 안내:
   - 최신 `master` pull 받을 것
   - `docs/data_collection_log.md`, `PLAN.md` 섹션 2(알려진 이슈) 확인
-  - `data/processed/` 산출물과 컬럼 설명 확인
-  - 이후 `feature/F404-eda-viz` 브랜치에서 작업 시작
+  - `notebooks/analysis.ipynb`의 F401~F404 섹션(그래프·해석) 확인
+  - `data/processed/merged_daily.csv` 컬럼 설명 확인
+  - 이후 `feature/F405-insight` 브랜치에서 작업 시작
 
 ---
 
@@ -71,13 +70,13 @@
 ## 4. 요약 플로우
 
 ```
-[본인] F401~F403 작업
+[본인] F401~F404 작업
    → feature 브랜치 커밋 → master MR 머지
    → docs/data_collection_log.md, PLAN.md 최신화
    → Drive에 진행 기록 + 산출물 백업 업로드
-   → 2차 담당자에게 "master 최신화 완료, F404부터 시작 가능" 안내
+   → 2차 담당자에게 "master 최신화 완료, F405부터 시작 가능" 안내
 
-[2차 담당자] F404~F406 작업
+[2차 담당자] F405~F406 작업
    → master pull → feature 브랜치 생성 → 작업
    → 완료 시 동일하게 MR 머지 + Drive 기록
 ```

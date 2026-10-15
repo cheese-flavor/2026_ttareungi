@@ -77,15 +77,16 @@ Open API / 웹크롤링 / 외부 공개 데이터셋으로 데이터를 확보·
 
 | 담당 | 범위 | 산출물 |
 |---|---|---|
-| **본인 (1차 담당)** | F401~F403 | 주제/질문 정의, 데이터 수집기록(`docs/data_collection_log.md`), 정제된 데이터(`data/processed/`), 전처리 코드가 포함된 ipynb |
-| **2차 담당자 (신현준)** | F404~F406 | EDA/시각화, 인사이트·한계·후속 ML 문제, (선택) 확장 분석 |
+| **본인 (1차 담당)** | F401~F404 | 주제/질문 정의, 데이터 수집기록(`docs/data_collection_log.md`), 정제된 데이터(`data/processed/`), 전처리·EDA/시각화 코드가 포함된 ipynb |
+| **2차 담당자 (신현준)** | F405~F406 | 인사이트·한계·후속 ML 문제, (선택) 추가 데이터 결합 및 분석 확장 |
 
-### 핸드오프 체크리스트 (F403 완료 시점에 전달)
+### 핸드오프 체크리스트 (F403 완료 시점 기준 — F404 완료 후 갱신 예정)
 - [x] `docs/data_collection_log.md` — 출처/수집방법/시점/범위/이용조건 기록 완료
 - [x] `data/processed/merged_daily.csv` — 정제·병합된 최종 데이터 (546행, 컬럼: `date, rentals, avg_temp, min_temp, max_temp, precip_mm, is_rain, avg_wind, avg_humidity`)
 - [x] `notebooks/analysis.ipynb`에 F401~F403 코드 및 "선정 근거 / 처리 근거" 서술 포함 (실행 완료, 에러 없음)
 - [x] 알려진 이슈·주의사항(섹션 2) 최신화
-- [ ] Git에 커밋/푸시 완료, 2차 담당자(신현준)에게 브랜치/커밋 위치 안내 ← **push는 보류 중, 사용자가 직접 진행 예정**
+- [x] Git에 커밋/푸시 완료 (F401~F403: `feature/F401-F403-setup`)
+- [ ] F404(EDA/시각화) 완료 후 신현준에게 브랜치/커밋 위치 안내
 
 > `data/processed/`에는 `merged_daily.csv`(F404부터 바로 사용) 외에, 중간 산출물로 인코딩만 표준화한
 > `bike_rentals_raw_utf8.csv`, `asos_108_raw_utf8.csv`(F402)도 함께 있다.
