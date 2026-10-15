@@ -5,7 +5,7 @@
 
 - 요구사항/실행계획: [PLAN.md](PLAN.md)
 - 데이터 수집 기록(F402): [docs/data_collection_log.md](docs/data_collection_log.md)
-- 협업 방식(Git/Drive): [docs/collaboration_guide.md](docs/collaboration_guide.md)
+- 협업 방식(Git): [docs/collaboration_guide.md](docs/collaboration_guide.md)
 - 원본 명세서: `데이터분석_및_시각화PJT_명세서.pdf`
 
 ## 폴더 구조
@@ -17,4 +17,9 @@ docs/            기록·가이드 문서
 ```
 
 ## 실행 방법
-`TODO: notebooks/analysis.ipynb 작성 후 필요한 패키지(requirements) 및 실행 순서 기입`
+```
+pip install pandas matplotlib seaborn jupyter
+jupyter notebook notebooks/analysis.ipynb
+```
+원본 CSV(`data/raw/`)만 있으면 `notebooks/analysis.ipynb`를 처음부터 끝까지 실행해
+`data/processed/`의 중간·최종 산출물(`merged_daily.csv` 등)이 재생성된다.

@@ -106,7 +106,7 @@ ttareungi_pjt/
 │   └── analysis.ipynb             # 수집~분석~해석 전체 코드
 ├── docs/
 │   ├── data_collection_log.md     # F402 수집 기록
-│   └── collaboration_guide.md     # Git/Drive 협업 방식
+│   └── collaboration_guide.md     # Git 협업 방식
 └── 데이터분석_및_시각화PJT_명세서.pdf
 ```
 
@@ -115,8 +115,7 @@ ttareungi_pjt/
 ## 6. 협업 방식 (요약 — 상세는 `docs/collaboration_guide.md`)
 
 - **Git(GitLab, lab.ssafy.com)**: 요구사항 단위 브랜치(`feature/F401-topic` 등) + 커밋 컨벤션(`[F401] ...`) + Merge Request로 master 병합.
-- **Drive**: 코드/데이터는 Git이 원본, Drive는 발표자료·보고서(ppt/pdf)·결과 이미지 백업·회의록 용도.
-  - 폴더: [따릉이_데이터분석프로젝트](https://drive.google.com/drive/folders/1tciLmBLNx3q8DAy-FAladtRsZJeQy0iN?usp=drive_link)
+- **Drive**: 사용하지 않기로 결정(2026-10-15). Git 저장소를 단일 원천으로 사용한다.
 
 ---
 
