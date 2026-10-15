@@ -35,3 +35,9 @@
 
 재실행: README의 가상환경 설치 후 `python scripts/execute_notebook.py`.
 원본 및 기존 전처리 데이터의 내용은 변경하지 않았다.
+
+## Merge Request 순서
+
+F405 선행 MR: https://lab.ssafy.com/dmsdk702/ttareungi_pjt/-/merge_requests/2
+
+F405를 master에 먼저 병합한 후 F406 변경을 검토·병합합니다. 이 브랜치에는 F405 구현 커밋도 포함되어 있으므로 선행 MR이 병합되기 전에는 누적 차이가 표시됩니다. 자동 병합은 사용하지 않습니다.
