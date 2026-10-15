@@ -153,3 +153,8 @@ jupyter notebook notebooks/analysis.ipynb
 
 이 문서로 막히는 부분이 있으면 1차 담당자에게 직접 확인. (`docs/collaboration_guide.md`에 Git 커밋
 컨벤션 `[F4xx] ...`도 같이 참고.)
+
+
+## 2차 작업 진행 상태 (2026-10-15)
+
+F405·F406 작성 및 전체 노트북 실행 검증 완료, 사용자 검토 대기. 기존 본문은 1차 인계 시점 기록입니다. 최신 결과와 병합 순서는 [검토 안내](docs/review_f405_f406.md)를 참고하세요. master 병합과 최종 제출은 아직 진행하지 않았습니다.
