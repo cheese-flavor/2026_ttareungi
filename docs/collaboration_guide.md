@@ -21,9 +21,9 @@
 | `feature/F401-topic-definition` | 본인 |
 | `feature/F402-data-collection` | 본인 |
 | `feature/F403-preprocessing` | 본인 |
-| `feature/F404-eda-viz` | 2차 담당자 |
-| `feature/F405-insight` | 2차 담당자 |
-| `feature/F406-extension` (선택) | 2차 담당자 |
+| `feature/F404-eda-viz` | 신현준 |
+| `feature/F405-insight` | 신현준 |
+| `feature/F406-extension` (선택) | 신현준 |
 
 ### 커밋 컨벤션
 ```
@@ -64,7 +64,7 @@
 ### 동기화 규칙
 - Drive는 **백업·공유 용도**이며 직접 편집 금지(충돌 방지) — 편집은 로컬에서 하고 결과물만 업로드
 - 각 요구사항(F4xx) 완료 시 `04_회의록_진행기록/`에 한 줄 업데이트(무엇을 했는지, 다음 담당자가 할 일)
-- Drive 폴더 링크는 `TODO: 생성 후 PLAN.md에 추가`
+- Drive 폴더 링크: [따릉이_데이터분석프로젝트](https://drive.google.com/drive/folders/1tciLmBLNx3q8DAy-FAladtRsZJeQy0iN?usp=drive_link)
 
 ---
 
