@@ -4,6 +4,7 @@
 날씨가 자전거 이용량에 미치는 영향을 분석한다.
 
 - 요구사항/실행계획: [PLAN.md](PLAN.md)
+- **F405~F406 인수인계 문서: [HANDOFF.md](HANDOFF.md)** (F401~F404 완료 상태에서 이어받는 사람용)
 - 데이터 수집 기록(F402): [docs/data_collection_log.md](docs/data_collection_log.md)
 - 협업 방식(Git): [docs/collaboration_guide.md](docs/collaboration_guide.md)
 - 원본 명세서: `데이터분석_및_시각화PJT_명세서.pdf`
