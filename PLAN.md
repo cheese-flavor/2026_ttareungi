@@ -81,11 +81,14 @@ Open API / 웹크롤링 / 외부 공개 데이터셋으로 데이터를 확보·
 | **2차 담당자 (신현준)** | F404~F406 | EDA/시각화, 인사이트·한계·후속 ML 문제, (선택) 확장 분석 |
 
 ### 핸드오프 체크리스트 (F403 완료 시점에 전달)
-- [ ] `docs/data_collection_log.md` — 출처/수집방법/시점/범위/이용조건 기록 완료
-- [ ] `data/processed/` — 정제·병합된 최종 데이터(csv) + 컬럼 설명
-- [ ] ipynb에 F401~F403 코드 및 "선정 근거 / 처리 근거" 서술 포함
-- [ ] 알려진 이슈·주의사항(섹션 2) 최신화
-- [ ] Git에 커밋/푸시 완료, 2차 담당자에게 브랜치/커밋 위치 안내
+- [x] `docs/data_collection_log.md` — 출처/수집방법/시점/범위/이용조건 기록 완료
+- [x] `data/processed/merged_daily.csv` — 정제·병합된 최종 데이터 (546행, 컬럼: `date, rentals, avg_temp, min_temp, max_temp, precip_mm, is_rain, avg_wind, avg_humidity`)
+- [x] `notebooks/analysis.ipynb`에 F401~F403 코드 및 "선정 근거 / 처리 근거" 서술 포함 (실행 완료, 에러 없음)
+- [x] 알려진 이슈·주의사항(섹션 2) 최신화
+- [ ] Git에 커밋/푸시 완료, 2차 담당자(신현준)에게 브랜치/커밋 위치 안내 ← **push는 보류 중, 사용자가 직접 진행 예정**
+
+> `data/processed/`에는 `merged_daily.csv`(F404부터 바로 사용) 외에, 중간 산출물로 인코딩만 표준화한
+> `bike_rentals_raw_utf8.csv`, `asos_108_raw_utf8.csv`(F402)도 함께 있다.
 
 ---
 
