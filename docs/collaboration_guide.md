@@ -19,8 +19,8 @@
 
 | 브랜치명 예시 | 담당 |
 |---|---|
-| `feature/F401-F403-setup` (실사용: F401~F403 통합) | 본인 |
-| `feature/F404-eda-viz` | 본인 |
+| `master` | 항상 최신 완료 상태 (F401~F404 완료본이 들어있음, 2026-10-15 생성) |
+| `feature/F401-F403-setup` (작업 기록용, 더 이상 사용 안 함) | 본인 |
 | `feature/F405-insight` | 신현준 |
 | `feature/F406-extension` (선택) | 신현준 |
 
@@ -38,13 +38,10 @@
 3. (2인 팀이라도) 서로 변경사항 간단히 확인 후 머지 — 특히 F404→F405 경계에서 결과물(그래프 해석 등)이 늘어나면 꼭 리뷰
 4. 충돌(conflict) 발생 시 데이터 파일(`data/processed/*.csv`)은 임의 수정 금지, 작성자에게 먼저 확인
 
-### 핸드오프 시점 (F404 → F405)
-- 본인이 F404까지 작업한 브랜치를 `master`에 머지 완료 후, 2차 담당자(신현준)에게 아래를 안내:
-  - 최신 `master` pull 받을 것
-  - `docs/data_collection_log.md`, `PLAN.md` 섹션 2(알려진 이슈) 확인
-  - `notebooks/analysis.ipynb`의 F401~F404 섹션(그래프·해석) 확인
-  - `data/processed/merged_daily.csv` 컬럼 설명 확인
-  - 이후 `feature/F405-insight` 브랜치에서 작업 시작
+### 핸드오프 시점 (F404 → F405) — 완료됨, 2026-10-15
+- `master` 브랜치에 F401~F404 전체가 반영되어 있다. 2차 담당자(신현준)는:
+  - [`HANDOFF.md`](../HANDOFF.md) 를 먼저 읽을 것 (진행 현황·데이터 스키마·전제/한계·F405·F406 요구사항 정리됨)
+  - `master` pull 받은 뒤 `feature/F405-insight` 브랜치를 새로 만들어 작업 시작
 
 ---
 

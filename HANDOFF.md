@@ -30,10 +30,13 @@
 ## 3. Git 상태 (2026-10-15 기준)
 
 - 원격 저장소: `https://lab.ssafy.com/dmsdk702/ttareungi_pjt.git`
-- **`master` 브랜치가 아직 없다.** 지금까지 모든 작업은 `feature/F401-F403-setup` 브랜치 하나에서만 진행됨.
-- 최신 커밋: `2af5ad3` `[F404] 탐색적 데이터 분석 및 시각화`
-- 커밋 로그(F401~F404):
+- **`master` 브랜치를 새로 만들어 push 완료.** F401~F404 전체 내용이 들어있다. **여기서 시작하면 된다.**
+- `feature/F401-F403-setup`은 작업 과정 기록용으로 남겨둠(최신 커밋 1개가 빠져 있어 `master`보다 살짝 뒤처짐
+  — 새 작업은 반드시 `master` 기준으로 시작할 것).
+- `master` 최신 커밋: `fa055b7` `docs: 핸드오프 준비 — 요구사항 재점검, HANDOFF.md 작성`
+- 커밋 로그(F401~F404 + 핸드오프 준비):
   ```
+  fa055b7 docs: 핸드오프 준비 — 요구사항 재점검, HANDOFF.md 작성
   2af5ad3 [F404] 탐색적 데이터 분석 및 시각화
   0f6a00b docs: Google Drive 사용 중단, Git 단일화 및 실행 방법 보완
   f869732 docs: 역할 분담을 F401~F404(본인)/F405~F406(신현준)으로 변경
@@ -43,14 +46,14 @@
   a96bd14 프로젝트 초기 설정: 명세서 요구사항 정리, 원본 데이터, 협업 가이드 추가
   ```
 
-### 브랜치 제안 (실행 전 1차 담당자 확인 필요 — 아직 미실행)
-`master`가 없는 상태라 다음을 제안한다:
-1. `feature/F401-F403-setup`을 기준으로 `master` 브랜치를 새로 만들어 origin에 push (내용 동일, 충돌 없음)
-2. 신현준은 `master`에서 `feature/F405-insight` 브랜치를 새로 만들어 작업 시작
-3. F405(필수) 완료 후 `master`로 Merge Request, F406(선택)을 하면 별도 브랜치(`feature/F406-extension`)로 추가 작업
-
-이 제안이 실행되기 전이라면, 우선 `feature/F401-F403-setup`에서 바로 `feature/F405-insight`를 분기해서
-시작해도 무방하다(어차피 내용은 같음). 최종 제출 전에 `master`로 한 번 정리하면 된다.
+### 시작 방법
+```bash
+git fetch origin
+git checkout master
+git pull
+git checkout -b feature/F405-insight
+```
+F405(필수) 완료 후 `master`로 Merge Request. F406(선택)을 한다면 `feature/F406-extension` 브랜치를 따로 판다.
 
 ---
 
