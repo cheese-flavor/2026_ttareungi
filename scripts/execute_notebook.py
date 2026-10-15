@@ -1,13 +1,17 @@
 """Execute analysis.ipynb with the current Python environment, then validate."""
 from pathlib import Path
 import sys
+import json
 import nbformat
 from nbclient import NotebookClient
 from jupyter_client import KernelManager
 
 root = Path(__file__).resolve().parents[1]
 path = root / "notebooks" / "analysis.ipynb"
-nb = nbformat.read(path, as_version=4)
+raw = json.loads(path.read_text(encoding="utf-8"))
+for index, cell in enumerate(raw["cells"]):
+    cell.setdefault("id", f"analysis-{index:03d}")
+nb = nbformat.reads(json.dumps(raw), as_version=4)
 for index, cell in enumerate(nb.cells):
     cell.setdefault("id", f"analysis-{index:03d}")
 km = KernelManager(kernel_name="python3")
