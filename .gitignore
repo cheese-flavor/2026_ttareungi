@@ -1,32 +1,7 @@
-# Local data and private project specifications
-/data/**
-!/data/README.md
-/private/
-*.pdf
-
-# Credentials and machine-specific settings
-.env
-.env.*
-!.env.example
-*credentials*.json
-*service-account*.json
-/token.json
-/configs/data_manifest.local.json
-
-# Python / Jupyter
+.ipynb_checkpoints/
 __pycache__/
-*.py[cod]
+*.pyc
 .venv/
 venv/
-.ipynb_checkpoints/
-.pytest_cache/
-
-# Editor / OS
-.vscode/
-.idea/
+.env
 .DS_Store
-Thumbs.db
-
-# Generated local output
-/outputs/**
-!/outputs/README.md
