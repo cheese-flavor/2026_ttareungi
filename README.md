@@ -1,5 +1,17 @@
 # 따릉이 이용량 × 날씨 데이터 분석 프로젝트
 
+## 5회차 머신러닝 후속 작업
+
+- [머신러닝 실행 방법·평가 조건](docs/ml/README.md)
+
+- [요구사항 1~8 및 완료 기준](docs/ml/REQUIREMENTS.md)
+- [데이터 준비 기록](docs/ml/DATA.md)
+- 공개 따릉이 CSV 복구: `python scripts/download_ml_data.py` (Python 3.9+, 데이터는 GitHub에서 제외)
+
+요구사항 1~6번은 코드·실행 결과·개조식 해석을 작성했습니다. 7~8번은 후속 작업입니다.
+새 과제 저장소: [GitLab 05-pjt](https://lab.ssafy.com/totori0710/05-pjt).
+아래 내용과 루트 PLAN/HANDOFF는 기존 4회차 분석 기록입니다.
+
 서울시 공공자전거(따릉이) 일별 대여건수와 기상청 ASOS 일별 기상 데이터를 결합해
 날씨가 자전거 이용량에 미치는 영향을 분석한다.
 
