@@ -3,8 +3,10 @@ import unittest
 
 import numpy as np
 import pandas as pd
+from sklearn.linear_model import LinearRegression
 
 from src.ml.features import FEATURES, make_features, validate_daily
+from src.ml.predict import forecast
 from src.ml.splits import split_data, time_cv
 
 
@@ -39,6 +41,36 @@ class TimingContractTests(unittest.TestCase):
         self.assertLessEqual(final_train.date.max(), test.date.min() - pd.Timedelta(days=2))
         for fit, holdout in time_cv().split(train):
             self.assertLessEqual(train.iloc[fit].date.max(), train.iloc[holdout].date.min() - pd.Timedelta(days=2))
+
+
+class ForecastTests(unittest.TestCase):
+    def setUp(self):
+        rng = np.random.default_rng(0)
+        self.daily = pd.DataFrame({"date": pd.date_range("2025-01-01", "2026-06-30"),
+                                   "rentals": rng.integers(10_000, 150_000, 546)})
+        frame = make_features(self.daily)
+        self.model = LinearRegression().fit(frame[FEATURES], frame.rentals)
+
+    def test_forecast_uses_only_targets_through_d_minus_2(self):
+        date = pd.Timestamp("2026-03-01")
+        result = forecast(self.daily, date, self.model)
+        expected = make_features(self.daily).loc[lambda f: f.date == date, FEATURES].reset_index(drop=True)
+        pd.testing.assert_frame_equal(result[FEATURES], expected)
+        changed = self.daily.copy()
+        changed.loc[changed.date >= date - pd.Timedelta(days=1), "rentals"] += 1_000_000
+        self.assertEqual(forecast(changed, date, self.model).prediction.iloc[0], result.prediction.iloc[0])
+
+    def test_forecast_after_data_end(self):
+        self.assertEqual(len(forecast(self.daily, "2026-07-02", self.model)), 1)
+        with self.assertRaises(ValueError):
+            forecast(self.daily, "2026-07-03", self.model)
+
+    def test_forecast_needs_28_days_of_history(self):
+        history = self.daily.iloc[:28]
+        target = history.date.max() + pd.Timedelta(days=2)
+        self.assertEqual(len(forecast(history, target, self.model)), 1)
+        with self.assertRaises(ValueError):
+            forecast(history.iloc[1:], target, self.model)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,7 @@
+{
+  "model": "random_forest",
+  "test_MAE": 18370.258006201308,
+  "data_end": "2026-06-30",
+  "july_2025_mean": 114071.06451612903,
+  "unavailable_2026_07_03": "Targets through 2026-07-01 are required"
+}
