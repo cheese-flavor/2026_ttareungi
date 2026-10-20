@@ -1,0 +1,5 @@
+features,model,selected,params,cv_MAE,cv_std
+base,ridge,False,{'ridge__alpha': 100},32550.08834628853,6792.961097963073
+base,random_forest,True,"{'randomforestregressor__max_depth': 3, 'randomforestregressor__min_samples_leaf': 7}",29886.893129104257,5212.626157026083
+holiday,ridge,False,{'ridge__alpha': 100},32209.83953336703,6717.871413087791
+holiday,random_forest,True,"{'randomforestregressor__max_depth': 3, 'randomforestregressor__min_samples_leaf': 7}",29923.712894620632,5212.955718686223

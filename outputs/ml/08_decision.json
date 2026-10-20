@@ -1,0 +1,14 @@
+{
+  "rule": "adopt holiday feature if selected-model mean CV MAE decreases; test is report-only",
+  "base_model": "random_forest",
+  "base_cv_MAE": 29886.893129104257,
+  "holiday_model": "random_forest",
+  "holiday_cv_MAE": 29923.712894620632,
+  "cv_change_pct": 0.12319703275052163,
+  "adopt_holiday": false,
+  "holiday_importance_MAE": 66.06179418230022,
+  "test_MAE": {
+    "base": 18370.258006201308,
+    "holiday": 18324.4446214108
+  }
+}

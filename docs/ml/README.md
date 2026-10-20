@@ -25,16 +25,31 @@ python -m venv .venv
 ```
 
 일부 단계만 재실행하려면 `python scripts/run_ml.py --steps 4 5 6`처럼 지정한다.
-5번은 선정 모델을 로컬에 저장하므로 6번 최초 실행 전에 5번을 수행해야 한다.
+5번은 선정 모델을 로컬에 저장하므로 6번 최초 실행 전에 5번을 수행해야 한다. 7번은 6번이 저장한 최종 모델과 테스트 예측을 사용한다.
 실행기는 각 노트북을 새 커널에서 실행하고 실제 결과에 근거한 짧은 개조식 해석을 추가한다.
 
 ## 산출물
 
-- `notebooks/ml/01.ipynb`~`06.ipynb`: 문제 정의, 전처리, 기준선, 모델 비교, CV, 최종 평가.
-- `src/ml/`: 재사용 가능한 피처·분할·모델·튜닝·평가 코드.
+- `notebooks/ml/01.ipynb`~`08.ipynb`: 문제 정의, 전처리, 기준선, 모델 비교, CV, 최종 평가, 활용 방안, 공휴일 추가 실험.
+- `src/ml/`: 재사용 가능한 피처·분할·모델·튜닝·평가·예측(`predict.forecast`)·공휴일(`calendar_features`) 코드.
 - `outputs/ml/`: 집계 성능, CV 실험 기록, 그래프, 모델 선정 설정.
 - `data/processed/`: 로컬 전처리 자료, 모델과 일별 예측 상세. Git 추적에서 제외한다.
-- 7번 활용 방안과 8번 선택 확장은 후속 범위이며 아직 구현하지 않았다.
+- 8번은 공휴일 피처를 같은 조건에서 비교했다. CV 개선이 없어 채택하지 않았다. 결과는 [RESULTS.md](RESULTS.md)에 있다.
+
+## 모델 사용 예
+
+```python
+import joblib
+from pathlib import Path
+from src.ml.features import load_daily
+from src.ml.predict import forecast
+
+root = Path(".")
+model = joblib.load(root / "data/processed/ml_final_pipeline.joblib")
+forecast(load_daily(root), "2026-07-01", model)  # 입력 피처 10개와 prediction 1행
+```
+
+D일을 예측하려면 D-2까지의 일별 대여건수가 연속으로 최소 28일 필요하다. 조건을 충족하지 않으면 `ValueError`가 발생한다.
 
 ## 평가와 한계
 
