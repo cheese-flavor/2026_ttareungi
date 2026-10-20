@@ -11,6 +11,8 @@ from jupyter_client import KernelManager
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "outputs/ml"
+# 4회차 선행 분석 결과(docs/ml/EDA_SUMMARY.md)
+PRIOR_EDA = {"max_temp_corr": 0.7188, "rain_gap_pct": -27.52}
 
 SETUP = '''from pathlib import Path
 import sys, json, time, joblib
@@ -175,7 +177,26 @@ worst = detail.nlargest(5, "absolute_error")[["date", "rentals", "prediction", "
 display(worst.round(1))
 # Public notebooks show only a few error examples; full daily records remain untracked.
 (LOCAL / "ml_error_examples.json").write_text(worst.to_json(orient="records", date_format="iso"), encoding="utf-8")
-''', "importance")]),
+''', "importance"),
+        ('''# 4회차 F406 결과(docs/ml/EDA_SUMMARY.md). 당일 관측 날씨를 사용한 사후 실험으로 입력 조건이 다르다.
+prior = pd.DataFrame([
+    {"model": "4회차 weather Ridge", "MAE": 16212.48164033676, "RMSE": 20634.831132942145, "WAPE": 0.1632160101143025},
+    {"model": "4회차 weather_calendar Ridge", "MAE": 12382.940625485498, "RMSE": 16629.422335266554, "WAPE": 0.1246628497234842},
+]).assign(same_day_weather=True)
+current = scores[["MAE", "RMSE", "WAPE"]].rename(index=lambda name: f"5회차 {name}").reset_index().assign(same_day_weather=False)
+eda_models = pd.concat([current, prior], ignore_index=True).set_index("model")
+eda_models.to_csv(OUT / "06_eda_models.csv")
+display(eda_models.round(4))
+half = daily.assign(year=daily.date.dt.year, month=daily.date.dt.month).query("month <= 6")
+eda_months = half.pivot_table(index="month", columns="year", values="rentals", aggfunc="mean")
+eda_months.columns = [f"mean_{year}" for year in eda_months.columns]
+eda_months["yoy_change_pct"] = (eda_months.mean_2026 / eda_months.mean_2025 - 1) * 100
+month_errors = grouped_metrics(detail, "month")
+month_errors.index = month_errors.index.str[-2:].astype(int)
+eda_months = eda_months.join(month_errors[["MAE", "WAPE"]])
+eda_months.to_csv(OUT / "06_eda_months.csv")
+display(eda_months.round(2))
+''', "eda")]),
 }
 
 
@@ -241,11 +262,28 @@ def notes(key):
                 f"- 월별 MAE가 가장 큰 시기는 {months.MAE.idxmax()}이며 계절별 오차가 균일하지 않음.\n"
                 "- 테스트는 기존 EDA에서 관찰한 2026년 상반기로, 완전히 새로운 기간의 성능을 보장하지 않음.")
     if key == "importance":
-        imp = pd.read_csv(OUT / "06_importance.csv")
-        return (f"- 순열 중요도에서 {imp.iloc[0].feature}의 평균 MAE 증가가 {imp.iloc[0].MAE_increase:,.0f}건으로 가장 큼.\n"
+        imp = pd.read_csv(OUT / "06_importance.csv").set_index("feature")
+        season = imp.loc[["year_sin", "year_cos"], "MAE_increase"].sum()
+        weekday = imp.loc[["dow_sin", "dow_cos", "weekend"], "MAE_increase"].sum()
+        return (f"- 순열 중요도에서 {imp.index[0]}의 평균 MAE 증가가 {imp.MAE_increase.iloc[0]:,.0f}건으로 가장 큼.\n"
+                f"- 연중 주기 피처의 MAE 증가 합은 {season:,.0f}건으로, 4회차 EDA의 뚜렷한 계절 패턴과 같은 방향임.\n"
+                f"- 4회차에서 최고기온 상관이 {PRIOR_EDA['max_temp_corr']:.2f}였으며, 날씨 입력이 없어 연중 주기가 기온 변화를 대신 반영했을 가능성이 있음.\n"
+                f"- 요일 피처의 MAE 증가 합은 {weekday:,.0f}건으로 작으며, 요일 패턴을 lag_7·이동평균이 흡수했을 가능성이 있음.\n"
                 "- 중요도는 모델의 입력 의존도이며 수요에 대한 인과효과를 의미하지 않음.\n"
                 "- 지연값·이동평균은 서로 연관되어 개별 중요도가 분산될 수 있음.\n"
                 "- 큰 오류의 원인을 날씨·공휴일로 단정할 수 없으며 후속 데이터로 확인해야 함.")
+    if key == "eda":
+        choice = json.loads((OUT / "05_selection.json").read_text(encoding="utf-8"))
+        models = table("06_eda_models.csv")
+        months = table("06_eda_months.csv")
+        bands = table("06_demand_band.csv")
+        ours, prior = models.loc[f"5회차 {choice['model']}"], models.loc["4회차 weather_calendar Ridge"]
+        worst = months.MAE.idxmax()
+        return (f"- 선정 모델의 테스트 MAE {ours.MAE:,.0f}건은 같은 기간 4회차 날씨+달력 회귀의 {prior.MAE:,.0f}건보다 큼.\n"
+                "- 4회차 모델은 당일 관측 날씨를 사용한 사후 실험으로 예측 시점 조건이 달라 직접 비교할 수 없음.\n"
+                "- 두 결과의 차이는 날씨 정보가 줄 수 있는 개선 폭의 상한에 가까우며 실제 효과는 기상예보로 검증해야 함.\n"
+                f"- MAE가 가장 큰 {worst}월은 일평균 {months.loc[worst, 'mean_2026']:,.0f}건, 전년 동월 대비 {months.loc[worst, 'yoy_change_pct']:+.2f}%로 EDA의 봄~초여름 수요 상승 구간에 해당함.\n"
+                f"- 저수요 구간 WAPE가 {bands.loc['low', 'WAPE']:.1%}로 가장 높음. 4회차에서 강수일 평균이 {abs(PRIOR_EDA['rain_gap_pct']):.2f}% 낮았으므로 강수일이 포함됐을 가능성이 있으나 강수 자료가 없어 확인하지 않음.")
     raise KeyError(key)
 
 
