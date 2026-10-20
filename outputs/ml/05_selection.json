@@ -1,0 +1,24 @@
+{
+  "model": "random_forest",
+  "params": {
+    "randomforestregressor__max_depth": 3,
+    "randomforestregressor__min_samples_leaf": 7
+  },
+  "cv_MAE": 29886.893129104257,
+  "selection_rule": "minimum mean CV MAE on training period; validation is diagnostic only",
+  "features": [
+    "lag_2",
+    "lag_7",
+    "lag_14",
+    "rolling_7",
+    "rolling_28",
+    "dow_sin",
+    "dow_cos",
+    "year_sin",
+    "year_cos",
+    "weekend"
+  ],
+  "random_state": 42,
+  "prediction_time": "D-1 00:00; targets through D-2",
+  "test_previously_seen_in_EDA": true
+}
