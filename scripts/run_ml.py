@@ -175,7 +175,7 @@ plt.tight_layout()
 plt.savefig(OUT / "06_importance.png", dpi=120)
 plt.show()
 worst = detail.nlargest(5, "absolute_error")[["date", "rentals", "prediction", "residual"]]
-display(worst.round(1))
+display(worst.round({"rentals": 1, "prediction": 1, "residual": 1}))
 # Public notebooks show only a few error examples; full daily records remain untracked.
 (LOCAL / "ml_error_examples.json").write_text(worst.to_json(orient="records", date_format="iso"), encoding="utf-8")
 ''', "importance"),
