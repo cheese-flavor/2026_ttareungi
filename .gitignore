@@ -8,6 +8,7 @@ venv/
 
 # Private specification and local credentials (data is tracked on GitLab)
 *.pdf
+# Local specifications, task assignments, prompts, and handoff notes
 /private/
 .env.*
 !.env.example
