@@ -1,4 +1,4 @@
-"""Build and execute requirements 1..7, adding short result-based Markdown notes."""
+"""Build and execute requirements 1..8, adding short result-based Markdown notes."""
 import argparse
 import json
 import sys
@@ -244,6 +244,70 @@ usage = pd.DataFrame([
 usage.to_csv(OUT / "07_usage.csv", index=False)
 display(usage)
 ''', "usage")]),
+    8: ("추가 실험: 공휴일 피처", [
+        ('''from src.ml.calendar_features import HOLIDAY_FEATURES, add_holiday, holiday_table
+
+holiday_frame = add_holiday(frame)
+train8, validation8, final_train8, test8 = split_data(holiday_frame)
+listing = holiday_table(daily.date.min(), daily.date.max())
+listing["weekday"] = listing.date.dt.day_name()
+listing.to_csv(OUT / "08_holidays.csv", index=False)
+counts = pd.DataFrame([{"split": name, "rows": len(part), "holidays": int(part.holiday.sum()),
+                        "weekday_holidays": int(((part.holiday == 1) & (part.weekend == 0)).sum())}
+                       for name, part in [("train", train8), ("validation", validation8),
+                                          ("final_train", final_train8), ("test", test8)]])
+counts.to_csv(OUT / "08_holiday_counts.csv", index=False)
+display(listing)
+display(counts)
+''', "holidays"),
+        ('''# Pre-registered rule: adopt the holiday feature only if the selected model's mean CV MAE on the training period improves.
+experiments, rows = {}, []
+for name, columns in [("base", FEATURES), ("holiday", HOLIDAY_FEATURES)]:
+    searches, _, _, selected = tune_models(train8[columns], train8.rentals)
+    experiments[name] = {"columns": columns, "search": searches[selected], "model": selected}
+    for model_name, search in searches.items():
+        rows.append({"features": name, "model": model_name, "selected": model_name == selected,
+                     "params": str(search.best_params_), "cv_MAE": -search.best_score_,
+                     "cv_std": search.cv_results_["std_test_score"][search.best_index_]})
+cv8 = pd.DataFrame(rows)
+cv8.to_csv(OUT / "08_cv.csv", index=False)
+display(cv8.round(3))
+base_cv, holiday_cv = (-experiments[name]["search"].best_score_ for name in ("base", "holiday"))
+decision = {"rule": "adopt holiday feature if selected-model mean CV MAE decreases; test is report-only",
+            "base_model": experiments["base"]["model"], "base_cv_MAE": base_cv,
+            "holiday_model": experiments["holiday"]["model"], "holiday_cv_MAE": holiday_cv,
+            "cv_change_pct": (holiday_cv / base_cv - 1) * 100, "adopt_holiday": bool(holiday_cv < base_cv)}
+display(decision)
+''', "cv8"),
+        ('''# Report-only: test results never change the decision above.
+predictions, models8 = {"lag_7": test8.lag_7.to_numpy()}, {}
+for name, experiment in experiments.items():
+    model8 = clone(experiment["search"].best_estimator_).fit(final_train8[experiment["columns"]], final_train8.rentals)
+    models8[name] = model8
+    predictions[name] = model8.predict(test8[experiment["columns"]])
+test_scores8 = compare(test8, predictions)
+test_scores8.to_csv(OUT / "08_test.csv")
+display(test_scores8.round(4))
+day_type = np.select([(test8.holiday == 1) & (test8.weekend == 0), test8.weekend == 1], ["holiday", "weekend"], "workday")
+day_rows = []
+for name in experiments:
+    detail8 = test8[["date", "rentals"]].assign(prediction=predictions[name], day_type=day_type)
+    day_rows.append(grouped_metrics(detail8, "day_type").assign(features=name).reset_index())
+by_day = pd.concat(day_rows, ignore_index=True)
+by_day.to_csv(OUT / "08_day_type.csv", index=False)
+display(by_day.round(4))
+by_day.pivot(index="group", columns="features", values="MAE").loc[["workday", "weekend", "holiday"]].plot.bar(
+    title="테스트 일 유형별 MAE: 기존 vs 공휴일 피처", ylabel="건/일", rot=0)
+plt.tight_layout()
+plt.savefig(OUT / "08_day_type.png", dpi=120)
+plt.show()
+importance8 = permutation_importance(models8["holiday"], test8[HOLIDAY_FEATURES], test8.rentals,
+    scoring="neg_mean_absolute_error", n_repeats=10, random_state=42, n_jobs=1)
+decision["holiday_importance_MAE"] = float(importance8.importances_mean[HOLIDAY_FEATURES.index("holiday")])
+decision["test_MAE"] = {name: float(test_scores8.loc[name, "MAE"]) for name in experiments}
+(OUT / "08_decision.json").write_text(json.dumps(decision, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+display(decision)
+''', "test8")]),
 }
 
 
@@ -359,12 +423,41 @@ def notes(key):
                 "- 개별 대여소 재배치·시간대 운영에는 대여소별 수요·재고 자료와 별도 모델이 필요함.\n"
                 f"- 관측 날씨를 쓴 4회차 사후 실험의 MAE {prior.MAE:,.0f}건과 현재 {ours.MAE:,.0f}건의 차이로 볼 때 기상예보 결합이 우선 개선 과제임.\n"
                 "- 공휴일은 사전에 알 수 있어 누수 없이 추가 가능하므로 8번 추가 실험 후보로 둠.")
+    if key == "holidays":
+        counts = pd.read_csv(OUT / "08_holiday_counts.csv").set_index("split")
+        return (f"- 대체·임시·선거 공휴일을 포함한 공식 공휴일을 holiday 피처로 추가함(holidays 패키지 KR).\n"
+                f"- 평일 공휴일은 학습 {counts.loc['train', 'weekday_holidays']}일, 테스트 {counts.loc['test', 'weekday_holidays']}일로 표본이 매우 적음.\n"
+                "- 공휴일은 사전에 공표되어 D-1 00:00에 사용할 수 있으며 대여건수와 무관하게 생성됨.\n"
+                "- 노동절은 2026년부터 공휴일이며 2025-05-01은 공휴일이 아니어서 두 해의 정의가 다름.")
+    if key == "cv8":
+        result = pd.read_csv(OUT / "08_cv.csv")
+        base = result.query("features == 'base' and selected").iloc[0]
+        holiday = result.query("features == 'holiday' and selected").iloc[0]
+        change = (holiday.cv_MAE / base.cv_MAE - 1) * 100
+        verdict = "채택함" if holiday.cv_MAE < base.cv_MAE else "채택하지 않음"
+        ridge = result.query("model == 'ridge'").set_index("features").cv_MAE
+        return (f"- 기존 피처의 선정 모델 {base.model} CV MAE {base.cv_MAE:,.0f}건은 5번 결과와 같은 조건임.\n"
+                f"- Ridge는 공휴일 추가로 CV MAE가 {(ridge['holiday'] / ridge['base'] - 1) * 100:+.2f}% 변해 선형 모델은 공휴일 신호를 일부 활용한 것으로 보임.\n"
+                "- 얕은 Random Forest(max_depth=3, min_samples_leaf=7)는 적은 공휴일 표본으로 분기를 만들기 어려웠을 가능성이 있음.\n"
+                f"- 공휴일 추가 후 선정 모델 {holiday.model}의 CV MAE는 {holiday.cv_MAE:,.0f}건으로 {change:+.2f}% 변함.\n"
+                f"- 사전에 정한 CV 기준에 따라 공휴일 피처를 {verdict}.\n"
+                f"- fold 표준편차 {holiday.cv_std:,.0f}건 대비 차이 {abs(holiday.cv_MAE - base.cv_MAE):,.0f}건으로 변동 범위를 함께 고려해야 함.")
+    if key == "test8":
+        decision = json.loads((OUT / "08_decision.json").read_text(encoding="utf-8"))
+        by_day = pd.read_csv(OUT / "08_day_type.csv").set_index(["features", "group"])
+        base_mae, holiday_mae = decision["test_MAE"]["base"], decision["test_MAE"]["holiday"]
+        hb, hh = by_day.loc[("base", "holiday")], by_day.loc[("holiday", "holiday")]
+        return (f"- 테스트 MAE는 기존 {base_mae:,.0f}건, 공휴일 추가 {holiday_mae:,.0f}건으로 {(holiday_mae / base_mae - 1) * 100:+.2f}% 변함.\n"
+                f"- 평일 공휴일 {int(hh.n)}일의 MAE는 {hb.MAE:,.0f}건에서 {hh.MAE:,.0f}건으로 변함.\n"
+                f"- 테스트 순열 중요도에서 holiday의 MAE 증가는 {decision['holiday_importance_MAE']:,.0f}건임.\n"
+                "- 테스트 결과는 보고용이며 채택 여부와 설정 선택에 사용하지 않음.\n"
+                "- 평일 공휴일 표본이 적어 개선·악화를 일반화하기 어렵고 연휴 전후·공휴일 다음 주 lag_7 왜곡은 별도 피처로 다루지 않음.")
     raise KeyError(key)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--steps", type=int, nargs="+", default=list(range(1, 8)), choices=range(1, 8))
+    parser.add_argument("--steps", type=int, nargs="+", default=list(range(1, 9)), choices=range(1, 9))
     args = parser.parse_args()
     folder = ROOT / "notebooks/ml"
     folder.mkdir(parents=True, exist_ok=True)

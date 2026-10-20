@@ -30,11 +30,11 @@ python -m venv .venv
 
 ## 산출물
 
-- `notebooks/ml/01.ipynb`~`07.ipynb`: 문제 정의, 전처리, 기준선, 모델 비교, CV, 최종 평가, 활용 방안.
-- `src/ml/`: 재사용 가능한 피처·분할·모델·튜닝·평가·예측(`predict.forecast`) 코드.
+- `notebooks/ml/01.ipynb`~`08.ipynb`: 문제 정의, 전처리, 기준선, 모델 비교, CV, 최종 평가, 활용 방안, 공휴일 추가 실험.
+- `src/ml/`: 재사용 가능한 피처·분할·모델·튜닝·평가·예측(`predict.forecast`)·공휴일(`calendar_features`) 코드.
 - `outputs/ml/`: 집계 성능, CV 실험 기록, 그래프, 모델 선정 설정.
 - `data/processed/`: 로컬 전처리 자료, 모델과 일별 예측 상세. Git 추적에서 제외한다.
-- 8번 선택 확장은 후속 범위이며 아직 구현하지 않았다.
+- 8번은 공휴일 피처를 같은 조건에서 비교했다. CV 개선이 없어 채택하지 않았다. 결과는 [RESULTS.md](RESULTS.md)에 있다.
 
 ## 모델 사용 예
 

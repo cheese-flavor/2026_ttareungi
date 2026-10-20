@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
+from src.ml.calendar_features import add_holiday
 from src.ml.features import FEATURES, make_features, validate_daily
 from src.ml.predict import forecast
 from src.ml.splits import split_data, time_cv
@@ -64,6 +65,15 @@ class ForecastTests(unittest.TestCase):
         self.assertEqual(len(forecast(self.daily, "2026-07-02", self.model)), 1)
         with self.assertRaises(ValueError):
             forecast(self.daily, "2026-07-03", self.model)
+
+    def test_holiday_flag_uses_only_the_calendar(self):
+        frame = add_holiday(make_features(self.daily))
+        flags = frame.set_index("date").holiday
+        for day, expected in (("2025-10-06", 1), ("2025-10-08", 1), ("2025-10-10", 0),
+                              ("2025-05-01", 0), ("2026-05-01", 1), ("2026-06-03", 1)):
+            self.assertEqual(flags[pd.Timestamp(day)], expected, day)
+        changed = add_holiday(make_features(self.daily.assign(rentals=self.daily.rentals * 3)))
+        pd.testing.assert_series_equal(changed.holiday, frame.holiday)
 
     def test_forecast_needs_28_days_of_history(self):
         history = self.daily.iloc[:28]
